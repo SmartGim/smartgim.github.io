@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="领域驱动,供应链," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="背景介绍 在现在比较常见的软件架构中 SSM 架构在一些项目中应用的非常广泛，但是仔细想想这种架构的开发方式实际上并没有使用面向对象的思路进行编程，对象只是一个数据的载体，对应着数据库表中的一条条记录。比如操作一个 User 对象。我们要修改用户的密码，现在怎么操作呢？创建一个 UserService 在 Service 里面新建一个 changePass 的方法，然后查询用户信息，更改密码。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="领域驱动设计供应链">
+<meta property="og:url" content="http://yoursite.com/2020/03/03/%E9%A2%86%E5%9F%9F%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1%E4%BE%9B%E5%BA%94%E9%93%BE/index.html">
+<meta property="og:site_name" content="Only4Play">
+<meta property="og:description" content="背景介绍 在现在比较常见的软件架构中 SSM 架构在一些项目中应用的非常广泛，但是仔细想想这种架构的开发方式实际上并没有使用面向对象的思路进行编程，对象只是一个数据的载体，对应着数据库表中的一条条记录。比如操作一个 User 对象。我们要修改用户的密码，现在怎么操作呢？创建一个 UserService 在 Service 里面新建一个 changePass 的方法，然后查询用户信息，更改密码。">
+<meta property="article:published_time" content="2020-03-03T03:43:21.000Z">
+<meta property="article:modified_time" content="2020-04-03T03:46:05.444Z">
+<meta property="article:author" content="GIM">
+<meta property="article:tag" content="领域驱动">
+<meta property="article:tag" content="供应链">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/03/03/领域驱动设计供应链/"/>
+
+
+
+
+
+  <title>领域驱动设计供应链 | Only4Play</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Only4Play</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">你若是金，何须镀金</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/03/%E9%A2%86%E5%9F%9F%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1%E4%BE%9B%E5%BA%94%E9%93%BE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="GIM">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Only4Play">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">领域驱动设计供应链</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-03T11:43:21+08:00">
+                2020-03-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JAVA/" itemprop="url" rel="index">
+                    <span itemprop="name">JAVA</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JAVA/DDD/" itemprop="url" rel="index">
+                    <span itemprop="name">DDD</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="背景介绍"><a href="#背景介绍" class="headerlink" title="背景介绍"></a>背景介绍</h3><ul>
+<li><p>在现在比较常见的软件架构中 SSM 架构在一些项目中应用的非常广泛，但是仔细想想这种架构的开发方式实际上并没有使用面向对象的思路进行编程，对象只是一个数据的载体，对应着数据库表中的一条条记录。比如操作一个 User 对象。我们要修改用户的密码，现在怎么操作呢？创建一个 UserService 在 Service 里面新建一个 changePass 的方法，然后查询用户信息，更改密码。 <a id="more"></a>习惯了这种开发方式之后，实际上并没有发现这种开发方式有什么问题。但是如果按照面向对象的思维方式，更改密码应该是哪个对象的行为呢，其实应该是 User 。因为用户拥有密码，它的行为应该由它自己进行控制。领域驱动设计正是强调这种设计。对象的行为应该由对象自己进行封装，而不是由第三方对象来进行维护（如 UserService ）。 </p>
+</li>
+<li><p>关于领域驱动本文不做过多的介绍，领域驱动是一个大的课题，美团技术发表过一篇文章进行了介绍 <a href="https://blog.csdn.net/k6T9Q8XKs6iIkZPPIFq/article/details/78909897/" target="_blank" rel="noopener">领域驱动设计（DDD）在美团点评业务系统的实践</a><br>。本文将通过一个业务模块的功能实现来说明领域驱动设计的好处。</p>
+</li>
+</ul>
+<h3 id="业务介绍"><a href="#业务介绍" class="headerlink" title="业务介绍"></a>业务介绍</h3><ul>
+<li>一家设备厂商，需要生产智能电子产品，电子产品的部件需要进行采购，公司有自己的仓库，需要对采购的零部件进行出入库统计，电子零部件在库房里可以组装，组装之后再进行对外售卖。公司现在需要一个供应链系统来对公司的所有的零部件进行跟踪和管理。</li>
+<li>零部件的跟踪是通过商品条码来进行跟踪的，零部件组装之后会有一个新的条码，或者是原来某个商品的条码。</li>
+<li>仓库可能有多个，仓库之间可以进行调货。</li>
+<li>京东和天猫商城背后的支撑平台实际就是一个大的供应链系统。对商品从进货到卖给消费者都有完整的跟踪链条。<h3 id="业务分析及技术简介"><a href="#业务分析及技术简介" class="headerlink" title="业务分析及技术简介"></a>业务分析及技术简介</h3>如果按照 MVC 的开发方式，在开发中实际需要完整的业务逻辑。因为这部分的业务逻辑是在 Service 层进行编写的。如果业务复杂并且后期业务逻辑变化快的时候，Service 层的代码会变的越来越难以维护。</li>
+</ul>
+<h4 id="项目模块和技术使用简介"><a href="#项目模块和技术使用简介" class="headerlink" title="项目模块和技术使用简介"></a>项目模块和技术使用简介</h4><ul>
+<li><a href="https://gitee.com/smartGim/ddd-erp" target="_blank" rel="noopener">项目源码地址</a></li>
+<li>本文将使用 Springboot SpringCloud 作为开发基础框架，使用Spring Data Jpa 作为数据存储框架，另外引入 QueryDsl 来补充 Spring Data Jpa 在查询上的不足。 通过 Spring Data Jpa 支持的聚合根事件进行业务间的解耦。</li>
+<li>模块介绍 </li>
+</ul>
+<ol>
+<li>gh-pom-parent 模块用于管理所有的 jar 包，</li>
+<li>gh-common 模块用于项目间通用功能的封装。</li>
+<li>gh-code-gen 一个封装好的代码生成器模块  。</li>
+<li>gh-erp-service 模块用于开发服务端的代码。</li>
+<li>gh-service-clients 模块用于服务端生成客户端代码（比如 feign 客户端调用代码，okhttp 客户端调用服务端代码）。</li>
+</ol>
+<ul>
+<li>关键封装点</li>
+</ul>
+<ol>
+<li>common 模块中封装了创建 JPA 实体类需要继承的父类。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">@MappedSuperclass</span><br><span class="line">@Data</span><br><span class="line">public abstract class AbstractEntity extends AggregateRoot implements Serializable &#123;</span><br><span class="line">    @Id</span><br><span class="line">    @GeneratedValue(strategy &#x3D; GenerationType.IDENTITY)</span><br><span class="line">    @Setter(AccessLevel.PROTECTED)</span><br><span class="line">    @Column(name &#x3D; &quot;id&quot;)</span><br><span class="line">    private Long id;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;created_at&quot;, nullable &#x3D; false, updatable &#x3D; false)</span><br><span class="line">    @Convert(converter &#x3D; InstantLongConverter.class)</span><br><span class="line">    @Setter(AccessLevel.PRIVATE)</span><br><span class="line">    private Instant createdAt;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;updated_at&quot;, nullable &#x3D; false)</span><br><span class="line">    @Convert(converter &#x3D; InstantLongConverter.class)</span><br><span class="line">    @Setter(AccessLevel.PRIVATE)</span><br><span class="line">    private Instant updatedAt;</span><br><span class="line"></span><br><span class="line">    @Version</span><br><span class="line">    @Column(name &#x3D; &quot;version&quot;)</span><br><span class="line">    @Setter(AccessLevel.PRIVATE)</span><br><span class="line">    private Integer version;</span><br><span class="line"></span><br><span class="line">    @PrePersist</span><br><span class="line">    public void prePersist()&#123;</span><br><span class="line">        this.setCreatedAt(Instant.now());</span><br><span class="line">        this.setUpdatedAt(Instant.now());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @PreUpdate</span><br><span class="line">    public void preUpdate()&#123;</span><br><span class="line">        this.setUpdatedAt(Instant.now());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public String toString() &#123;</span><br><span class="line">        return this.getClass().getSimpleName() + &quot;-&quot; + getId();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个类为每个实体的父类,这样子类就不用单独写Id ,CreateTime ,UpdateTime, Version 等属性了。另外 JPA 还支持自动审计的功能 @EnableJpaAuditing ,这个在某些场景下不是很通用，如果有需要可以封装在自己编写的父类上。</p>
+<ol start="2">
+<li>service 层解耦代码封装</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br></pre></td><td class="code"><pre><span class="line">public abstract class AbstractService implements IService&#123;</span><br><span class="line"></span><br><span class="line">    private final Logger logger;</span><br><span class="line"></span><br><span class="line">    protected AbstractService(Logger logger) &#123;</span><br><span class="line">        this.logger &#x3D; logger;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    protected &lt;ID, T extends AggregateRoot&gt; Creator&lt;ID, T&gt; creatorFor(BaseRepository&lt;T,ID&gt; repository)&#123;</span><br><span class="line">        return new Creator&lt;ID, T&gt;(repository);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    protected &lt;ID, T extends AggregateRoot&gt; Updater&lt;ID, T&gt; updaterFor(BaseRepository&lt;T,ID&gt; repository)&#123;</span><br><span class="line">        return new Updater&lt;ID, T&gt;(repository);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    protected class Creator&lt;ID, T extends AggregateRoot&gt;&#123;</span><br><span class="line">        private final BaseRepository&lt;T,ID&gt; repository;</span><br><span class="line">        private Supplier&lt;T&gt; instanceFun;</span><br><span class="line">        private Consumer&lt;T&gt; updater &#x3D; a-&gt;&#123;&#125;;</span><br><span class="line">        private Consumer&lt;T&gt; successFun &#x3D; a -&gt; logger.info(&quot;success to save &quot;);</span><br><span class="line">        private BiConsumer&lt;T, Exception&gt; errorFun &#x3D; (a, e) -&gt; &#123;</span><br><span class="line">            logger.error(&quot;failed to save &#123;&#125;.&quot;, a, e);</span><br><span class="line">            if(BusinessException.class.isAssignableFrom(e.getClass()))&#123;</span><br><span class="line">                throw (BusinessException)e;</span><br><span class="line">            &#125;</span><br><span class="line">            throw new BusinessException(CodeEnum.SaveError);</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        Creator(BaseRepository&lt;T,ID&gt; repository) &#123;</span><br><span class="line">            Preconditions.checkArgument(repository !&#x3D; null);</span><br><span class="line">            this.repository &#x3D; repository;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public Creator&lt;ID, T&gt; instance(Supplier&lt;T&gt; instanceFun)&#123;</span><br><span class="line">            Preconditions.checkArgument(instanceFun !&#x3D; null);</span><br><span class="line">            this.instanceFun &#x3D; instanceFun;</span><br><span class="line">            return this;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public Creator&lt;ID, T&gt; update(Consumer&lt;T&gt; updater)&#123;</span><br><span class="line">            Preconditions.checkArgument(updater !&#x3D; null);</span><br><span class="line">            this.updater &#x3D; this.updater.andThen(updater);</span><br><span class="line">            return this;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public Creator&lt;ID, T&gt; onSuccess(Consumer&lt;T&gt; onSuccessFun)&#123;</span><br><span class="line">            Preconditions.checkArgument(onSuccessFun !&#x3D; null);</span><br><span class="line">            this.successFun &#x3D; onSuccessFun.andThen(this.successFun);</span><br><span class="line">            return this;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public Creator&lt;ID, T&gt; onError(BiConsumer&lt;T, Exception&gt; errorFun)&#123;</span><br><span class="line">            Preconditions.checkArgument(errorFun !&#x3D; null);</span><br><span class="line">            this.errorFun &#x3D; errorFun.andThen(this.errorFun);</span><br><span class="line">            return this;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public T call()&#123;</span><br><span class="line">            Preconditions.checkArgument(this.instanceFun !&#x3D; null, &quot;instance fun can not be null&quot;);</span><br><span class="line">            Preconditions.checkArgument(this.repository !&#x3D; null, &quot;repository can not be null&quot;);</span><br><span class="line">            T a &#x3D; null;</span><br><span class="line">            try&#123;</span><br><span class="line">                a &#x3D; this.instanceFun.get();</span><br><span class="line"></span><br><span class="line">                this.updater.accept(a);</span><br><span class="line"></span><br><span class="line">                this.repository.save(a);</span><br><span class="line"></span><br><span class="line">                this.successFun.accept(a);</span><br><span class="line">            &#125;catch (Exception e)&#123;</span><br><span class="line">                this.errorFun.accept(a, e);</span><br><span class="line">            &#125;</span><br><span class="line">            return a;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    protected class Updater&lt;ID, T extends AggregateRoot&gt; &#123;</span><br><span class="line">        private final BaseRepository&lt;T,ID&gt; repository;</span><br><span class="line">        private ID id;</span><br><span class="line">        private Supplier&lt;Optional&lt;T&gt;&gt; loader;</span><br><span class="line">        private Consumer&lt;ID&gt; onNotExistFun &#x3D; id-&gt; &#123;throw new BusinessException(CodeEnum.NotFindError);&#125;;</span><br><span class="line">        private Consumer&lt;T&gt; updater &#x3D; a-&gt;&#123;&#125;;</span><br><span class="line">        private Consumer&lt;Data&gt; successFun &#x3D; a -&gt; logger.info(&quot;success to update &#123;&#125;&quot;, a.getId());</span><br><span class="line">        private BiConsumer&lt;Data, Exception&gt; errorFun &#x3D; (a, e) -&gt; &#123;</span><br><span class="line">            logger.error(&quot;failed to update &#123;&#125;.&#123;&#125;&quot;, a, e);</span><br><span class="line">            if(BusinessException.class.isAssignableFrom(e.getClass()))&#123;</span><br><span class="line">                throw (BusinessException)e;</span><br><span class="line">            &#125;</span><br><span class="line">            throw new BusinessException(CodeEnum.UpdateError);</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        Updater(BaseRepository&lt;T,ID&gt; repository) &#123;</span><br><span class="line">            this.repository &#x3D; repository;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public Updater&lt;ID, T&gt; id(ID id)&#123;</span><br><span class="line">            Preconditions.checkArgument(id !&#x3D; null);</span><br><span class="line">            this.id &#x3D; id;</span><br><span class="line">            return this;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public Updater&lt;ID, T&gt; loader(Supplier&lt;Optional&lt;T&gt;&gt; loader)&#123;</span><br><span class="line">            Preconditions.checkArgument(loader !&#x3D; null);</span><br><span class="line">            this.loader &#x3D; loader;</span><br><span class="line">            return this;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public Updater&lt;ID, T&gt; update(Consumer&lt;T&gt; updater)&#123;</span><br><span class="line">            Preconditions.checkArgument(updater !&#x3D; null);</span><br><span class="line">            this.updater &#x3D; updater.andThen(this.updater);</span><br><span class="line">            return this;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        public Updater&lt;ID, T&gt; onSuccess(Consumer&lt;Data&gt; onSuccessFun)&#123;</span><br><span class="line">            Preconditions.checkArgument(onSuccessFun !&#x3D; null);</span><br><span class="line">            this.successFun &#x3D; onSuccessFun.andThen(this.successFun);</span><br><span class="line">            return this;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public Updater&lt;ID, T&gt; onError(BiConsumer&lt;Data, Exception&gt; errorFun)&#123;</span><br><span class="line">            Preconditions.checkArgument(errorFun !&#x3D; null);</span><br><span class="line">            this.errorFun &#x3D; errorFun.andThen(this.errorFun);</span><br><span class="line">            return this;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        public Updater&lt;ID, T&gt; onNotExist(Consumer&lt;ID&gt; onNotExistFun)&#123;</span><br><span class="line">            Preconditions.checkArgument(onNotExistFun !&#x3D; null);</span><br><span class="line">            this.onNotExistFun &#x3D; onNotExistFun.andThen(this.onNotExistFun);</span><br><span class="line">            return this;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public T call()&#123;</span><br><span class="line">            Preconditions.checkArgument(this.repository !&#x3D; null, &quot;repository can not be null&quot;);</span><br><span class="line">            Preconditions.checkArgument((this.loader !&#x3D; null || this.id !&#x3D; null), &quot;id and loader can not both be null&quot;);</span><br><span class="line">            T a &#x3D; null;</span><br><span class="line">            try &#123;</span><br><span class="line">                if (id !&#x3D; null &amp;&amp; loader !&#x3D; null)&#123;</span><br><span class="line">                    throw new RuntimeException(&quot;id and loader can both set&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">                if (id !&#x3D; null)&#123;</span><br><span class="line">                    this.loader &#x3D; ()-&gt;this.repository.findById(id);</span><br><span class="line">                &#125;</span><br><span class="line">                Optional&lt;T&gt; aOptional &#x3D; this.loader.get();</span><br><span class="line"></span><br><span class="line">                if (!aOptional.isPresent())&#123;</span><br><span class="line">                    this.onNotExistFun.accept(id);</span><br><span class="line">                &#125;</span><br><span class="line">                a &#x3D; aOptional.get();</span><br><span class="line">                updater.accept(a);</span><br><span class="line"></span><br><span class="line">                this.repository.save(a);</span><br><span class="line"></span><br><span class="line">                this.successFun.accept(new Data(id, a));</span><br><span class="line"></span><br><span class="line">            &#125;catch (Exception e)&#123;</span><br><span class="line">                this.errorFun.accept(new Data(id, a), e);</span><br><span class="line">            &#125;</span><br><span class="line">            return a;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        @Value</span><br><span class="line">        public class Data&#123;</span><br><span class="line">            private final ID id;</span><br><span class="line">            private final T entity;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个类利用 JAVA8 函数式编程将对象和行为进行分离。Service 继承这个类后可以使用链式编程并且将原来 Service 层业务逻辑代码抽离到实体类中进行编写。</p>
+<ol start="3">
+<li>平台通用枚举封装</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">package cn.geekhalo.common.constants;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public interface BaseEnum&lt;T extends Enum&lt;T&gt; &amp; BaseEnum&lt;T&gt;&gt; &#123;</span><br><span class="line"></span><br><span class="line">    Integer getCode();</span><br><span class="line"></span><br><span class="line">    String getName();</span><br><span class="line"></span><br><span class="line">    static&lt;T extends Enum&lt;T&gt; &amp; BaseEnum&lt;T&gt; &gt; T parseByCode(Class&lt;T&gt; cls, Integer code)&#123;</span><br><span class="line">        for (T t : cls.getEnumConstants())&#123;</span><br><span class="line">            if (t.getCode().intValue() &#x3D;&#x3D; code.intValue())&#123;</span><br><span class="line">                return t;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return null;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在一些项目中比较多的是写一个常量类，但是对于一些错误信息，我们往往需要给前端返回错误信息和错误码，这里我们使用枚举进行了封装。另外配合一个工具类可以方便的给前端返回下拉常量列表。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">package cn.geekhalo.common.utils;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">import cn.geekhalo.common.constants.BaseEnum;</span><br><span class="line">import cn.geekhalo.common.constants.EnumDict;</span><br><span class="line"></span><br><span class="line">import java.util.EnumSet;</span><br><span class="line">import java.util.List;</span><br><span class="line">import java.util.stream.Collectors;</span><br><span class="line"></span><br><span class="line">public class EnumDictUtils &#123;</span><br><span class="line">    private EnumDictUtils()&#123;&#125;</span><br><span class="line">    public static &lt;T extends Enum&lt;T&gt; &amp; BaseEnum&lt;T&gt;&gt; List&lt;EnumDict&gt; getEnumDicts(Class&lt;T&gt; cls)&#123;</span><br><span class="line">       return EnumSet.allOf(cls).stream().map(et -&gt; new EnumDict(et.getName(), et.getCode())).collect(Collectors.toList());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>事件解耦</li>
+</ol>
+<p>最新的 Spring Data 中 提供了一个抽象聚合根</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;</span><br><span class="line">&#x2F;&#x2F; Source code recreated from a .class file by IntelliJ IDEA</span><br><span class="line">&#x2F;&#x2F; (powered by Fernflower decompiler)</span><br><span class="line">&#x2F;&#x2F;</span><br><span class="line"></span><br><span class="line">package org.springframework.data.domain;</span><br><span class="line"></span><br><span class="line">import java.util.ArrayList;</span><br><span class="line">import java.util.Collection;</span><br><span class="line">import java.util.Collections;</span><br><span class="line">import java.util.List;</span><br><span class="line">import org.springframework.data.annotation.Transient;</span><br><span class="line">import org.springframework.util.Assert;</span><br><span class="line"></span><br><span class="line">public class AbstractAggregateRoot&lt;A extends AbstractAggregateRoot&lt;A&gt;&gt; &#123;</span><br><span class="line">    @Transient</span><br><span class="line">    private final transient List&lt;Object&gt; domainEvents &#x3D; new ArrayList();</span><br><span class="line"></span><br><span class="line">    public AbstractAggregateRoot() &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    protected &lt;T&gt; T registerEvent(T event) &#123;</span><br><span class="line">        Assert.notNull(event, &quot;Domain event must not be null!&quot;);</span><br><span class="line">        this.domainEvents.add(event);</span><br><span class="line">        return event;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @AfterDomainEventPublication</span><br><span class="line">    protected void clearDomainEvents() &#123;</span><br><span class="line">        this.domainEvents.clear();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @DomainEvents</span><br><span class="line">    protected Collection&lt;Object&gt; domainEvents() &#123;</span><br><span class="line">        return Collections.unmodifiableList(this.domainEvents);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    protected final A andEventsFrom(A aggregate) &#123;</span><br><span class="line">        Assert.notNull(aggregate, &quot;Aggregate must not be null!&quot;);</span><br><span class="line">        this.domainEvents.addAll(aggregate.domainEvents());</span><br><span class="line">        return this;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    protected final A andEvent(Object event) &#123;</span><br><span class="line">        this.registerEvent(event);</span><br><span class="line">        return this;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>继承了这个类后，在实体中可以注册事件，当调用 JPA 的 save 方法后，会将事件发出。并且还可以通过<br>@TransactionalEventListener 进行事务的集成。再通过</p>
+<p>TransactionPhase.BEFORE_COMMIT</p>
+<p>TransactionPhase.AFTER_COMMIT</p>
+<p>TransactionPhase.AFTER_ROLLBACK</p>
+<p>TransactionPhase.AFTER_COMPLETION</p>
+<p>这四种配置监听器执行的时机。<br>5.  数据校验封装</p>
+<p>数据安全校验在系统中必不可少，比较方便的方法是通过注解进行校验，Hibernate Validator 在一些校验上还有一些不方便之处。本项目中引入一个比较好用的校验框架进行封装。Jodd-vtor ,写一个通用校验类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public class BaseValidator &#123;</span><br><span class="line">	public static &lt;T&gt; Validate  verifyDto(T dto)&#123;</span><br><span class="line">		Vtor vtor &#x3D; Vtor.create();</span><br><span class="line">		vtor.validate(dto);</span><br><span class="line">	    List&lt;Violation&gt; vlist &#x3D; vtor.getViolations();</span><br><span class="line">	    DefaultValidate validate &#x3D; new DefaultValidate();</span><br><span class="line">	    if(CollectionUtils.isEmpty(vlist))&#123;</span><br><span class="line">	    	validate.setPass(true);</span><br><span class="line">		&#125;else &#123;</span><br><span class="line">	    	validate.setPass(false);</span><br><span class="line">	    	validate.setErrorList(vlist.stream().map(vr -&gt; new ErrorBody(vr.getCheck().getName(),vr.getCheck().getMessage())).collect(Collectors.toList()));</span><br><span class="line">		&#125;</span><br><span class="line">		return validate;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>一些平台不支持的手机号，和一些其他定制的校验通过扩展来进行封装。可以查看cn.geekhalo.common.validator 包下。<br>6.  QueryDsl 集成</p>
+<p>QueryDsl 使用面向对象的方式进行 Sql 语句的编写。通过编译期生成 Q类 。<br>在 Maven 中配置如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&lt;plugin&gt;</span><br><span class="line">    &lt;groupId&gt;com.mysema.maven&lt;&#x2F;groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;apt-maven-plugin&lt;&#x2F;artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.1.3&lt;&#x2F;version&gt;</span><br><span class="line">    &lt;executions&gt;</span><br><span class="line">        &lt;execution&gt;</span><br><span class="line">            &lt;goals&gt;</span><br><span class="line">                &lt;goal&gt;process&lt;&#x2F;goal&gt;</span><br><span class="line">            &lt;&#x2F;goals&gt;</span><br><span class="line">            &lt;configuration&gt;</span><br><span class="line">                &lt;outputDirectory&gt;target&#x2F;generated-sources&#x2F;java&lt;&#x2F;outputDirectory&gt;</span><br><span class="line">                &lt;processor&gt;com.querydsl.apt.jpa.JPAAnnotationProcessor&lt;&#x2F;processor&gt;</span><br><span class="line">            &lt;&#x2F;configuration&gt;</span><br><span class="line">        &lt;&#x2F;execution&gt;</span><br><span class="line">    &lt;&#x2F;executions&gt;</span><br><span class="line">&lt;&#x2F;plugin&gt;</span><br></pre></td></tr></table></figure>
+<p>再导入项目依赖的包即可使用。具体用法可以在源码中进行查看。</p>
+<p>引入 QueryDsl 有一个问题就是如果我们的父类在别的包里面，那么这个插件是默认不会找到父类并生成父类的 Q类的，所以要在项目中加上一个package-info 类。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@QueryEntities(value &#x3D; &#123;AbstractEntity.class&#125;)</span><br><span class="line">package cn.geekhalo.erp.config;</span><br><span class="line"></span><br><span class="line">import cn.geekhalo.common.ddd.support.AbstractEntity;</span><br><span class="line">import com.querydsl.core.annotations.QueryEntities;</span><br></pre></td></tr></table></figure>
+
+<p>想用 JPA 使用 QueryDsl 提供的查询 方法则类需要继承一个接口 QuerydslPredicateExecutor<br>用法如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">package cn.geekhalo.erp.repository.product;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">import cn.geekhalo.common.ddd.support.BaseRepository;</span><br><span class="line">import cn.geekhalo.erp.domain.product.Product;</span><br><span class="line">import org.springframework.data.querydsl.QuerydslPredicateExecutor;</span><br><span class="line"></span><br><span class="line">public interface ProductRepository extends BaseRepository&lt;Product,Long&gt;, QuerydslPredicateExecutor&lt;Product&gt; &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="7">
+<li>代码生成器简介</li>
+</ol>
+<p>随着越来越多的框架支持编译期自动生成代码（比如 QueryDsl )。了解并熟练使用这门技术对开发有极大的帮助。本文开发的自动代码生成器主要引入以下两个 jar 包。关于代码实现可以查看源码，这里只是一个最初版的简单应用，文章最后会有其他介绍。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.squareup&lt;&#x2F;groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;javapoet&lt;&#x2F;artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.8.0&lt;&#x2F;version&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.google.auto.service&lt;&#x2F;groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;auto-service&lt;&#x2F;artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.0-rc2&lt;&#x2F;version&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br></pre></td></tr></table></figure>
+<p>这门技术叫 APT (Annotation Processing Tool),可以去 Google 搜索并深入研究该技术的使用。</p>
+<p>本文主要使用自定义的注解 @GenCreator @GenUpdater 生成 BaseCreator BaseUpdater 。然后在 Domain 类进行数据的组装。如果不太理解可以简单的理解为 Bean 属性的复制。将 Dto 的属性复制到 Po 中，然后再进行 Entity 的保存。</p>
+<ol start="8">
+<li>JPA Entity 对象间关系的优化</li>
+</ol>
+<p>熟悉 Hibernate 的同学应该知道，Hibernate 可以通过配置对象的关系，通过@OneToMany @OneToOne @ManyToOne 来进行对象映射。但是无论是懒加载和外键的设置都会有很多性能问题，在本文中不再使用关系进行配置，对象间没有任何外键的约束，如果对象间有关系，那么通过 ID 进行引用。也就是互联网中比较常见的无外键建表方式。</p>
+<h4 id="商品的录入设计（面向对象的设计）"><a href="#商品的录入设计（面向对象的设计）" class="headerlink" title="商品的录入设计（面向对象的设计）"></a>商品的录入设计（面向对象的设计）</h4><ul>
+<li>电商系统大家应该都比较熟悉，在天猫和京东购物去浏览商品，我们可以看到不同的产品分类，当查看某个商品的时候，不同的商品会有不同的属性描述，同一个商品会有不同的型号，商品的录入就是要实现这样的一个功能。</li>
+<li>在上面的描述中出现了电商系统中两个常见的概念 SPU和SKU,SPU是标准化产品单元，区分品种，SKU是库存量单位。举个例子苹果手机叫SPU,它是一个大的产品分类，16g，红色苹果手机就叫SKU,它是库存量单位，出库和销售都是针对SKU来说的。</li>
+<li>在面向对象的思维中，我们首先要考虑对象和对象之间的关系。从上面的需求中我们能抽象出来以下几个对象：产品，规格，产品属性，产品属性值，规格属性值，规格子项，产品分类等。</li>
+<li>产品和规格是一对多的关系。产品和属性是一个对多的关系，属性和属性值是一对多的关系，规格和规格子项是一对多的关系，产品和产品分类是多对一的关系。</li>
+<li>分析清楚了对象之间的关系，在领域驱动中比较关键的一步，就是要考虑每个抽象出来的对象本身有什么行为，也就是对应对象有什么方法。也就是说对象的行为只能对象本身去操作，外部对象只能调用对象提供的方法，外部对象不能直接操作对象。</li>
+<li>首先面对这些对象，我们可以先不要考虑业务究竟要执行哪些动作，我们要先分析，这个对象有什么行为，首先抽象出来一个产品对象：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line">@Data</span><br><span class="line">@Entity</span><br><span class="line">@Table(name &#x3D; &quot;tb_product&quot;)</span><br><span class="line">@ToString(callSuper &#x3D; true)</span><br><span class="line">@GenVO</span><br><span class="line">public class Product extends AbstractEntity &#123;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;product_name&quot;)</span><br><span class="line">    private String productName;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;product_code&quot;)</span><br><span class="line">    private String productCode;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;category_id&quot;)</span><br><span class="line">    private Long categoryId;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;type_id&quot;)</span><br><span class="line">    private Long productTypeId;</span><br><span class="line">    </span><br><span class="line">    @Column(name &#x3D; &quot;price&quot;)</span><br><span class="line">    @Description(value &#x3D; &quot;指导价格&quot;)</span><br><span class="line">    private BigDecimal price;</span><br><span class="line"></span><br><span class="line">    @Convert(converter &#x3D; ValidStatusConverter.class)</span><br><span class="line">    @Column(name &#x3D; &quot;valid_status&quot;)</span><br><span class="line">    @Description(value &#x3D; &quot;上下架状态&quot;)</span><br><span class="line">    @GenCreatorIngore</span><br><span class="line">    @GenUpdaterIgnore</span><br><span class="line">    private ValidStatus validStatus;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;serialize_type&quot;)</span><br><span class="line">    @Description(value &#x3D; &quot;序列化类型&quot;)</span><br><span class="line">    @Convert(converter &#x3D; SerializeTypeConverter.class)</span><br><span class="line">    private SerializeType serializeType;</span><br><span class="line"></span><br><span class="line">    @Description(value &#x3D; &quot;保修时间--销售日期为准+天数&quot;)</span><br><span class="line">    @Column(name &#x3D; &quot;valid_days&quot;)</span><br><span class="line">    private Integer validDays;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public void init()&#123;</span><br><span class="line">        setValidStatus(ValidStatus.VALID);</span><br><span class="line">    &#125;</span><br><span class="line">    public void createProduct(CreateProductDto dto)&#123;</span><br><span class="line">        setPrice(dto.getPrice());</span><br><span class="line">        setValidDays(dto.getValidDays());</span><br><span class="line">        setProductName(dto.getProductName());</span><br><span class="line">        setSerializeType(dto.getSerializeType());</span><br><span class="line">        setCategoryId(dto.getCategoryId());</span><br><span class="line">        setProductTypeId(dto.getTypeId());</span><br><span class="line">        setProductCode(dto.getProductCode());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void invalid()&#123;</span><br><span class="line">        if(Objects.equals(ValidStatus.INVALID,getValidStatus()))&#123;</span><br><span class="line">            throw new BusinessException(ErrorMsg.StatusHasInvalid);</span><br><span class="line">        &#125;</span><br><span class="line">        setValidStatus(ValidStatus.INVALID);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void valid()&#123;</span><br><span class="line">        if(Objects.equals(ValidStatus.VALID,getValidStatus()))&#123;</span><br><span class="line">            throw new BusinessException(ErrorMsg.StatusHasValid);</span><br><span class="line">        &#125;</span><br><span class="line">        setValidStatus(ValidStatus.VALID);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这个类中，可以看到，我们的实体类不再像之前 Entity 的用法一样了，这里面有创建逻辑，和禁用，启用逻辑了。那么 Service 层的代码现在这样编写。比如禁用和启用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public void validProduct(Long id) &#123;</span><br><span class="line">    updaterFor(productRepository)</span><br><span class="line">            .id(id)</span><br><span class="line">            .update(product -&gt; product.valid())</span><br><span class="line">            .call();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@Override</span><br><span class="line">public void invalidProduct(Long id) &#123;</span><br><span class="line">    updaterFor(productRepository)</span><br><span class="line">            .id(id)</span><br><span class="line">            .update(product -&gt; product.invalid())</span><br><span class="line">            .call();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样做的好处就是 Product 的validStatus 的更改只能通过 Product 实体里面定义的方法进行更改，这样便于统一维护。如果更改点散落在 service 中，那么将来有改动的话，则需要找到更改的 Service ，而实际情况是你不知道 Service 在哪里进行了更改。</p>
+<p>产品有属性对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">@Data</span><br><span class="line">@Entity</span><br><span class="line">@Table(name &#x3D; &quot;tb_product_attribute&quot;)</span><br><span class="line">@GenVO</span><br><span class="line">public class ProductAttribute extends AbstractEntity &#123;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;product_id&quot;)</span><br><span class="line">    @Setter</span><br><span class="line">    private Long productId;</span><br><span class="line"></span><br><span class="line">    @Setter(AccessLevel.PROTECTED)</span><br><span class="line">    @Column(name &#x3D; &quot;attr_name&quot;)</span><br><span class="line">    @Description(value &#x3D; &quot;属性名称&quot;)</span><br><span class="line">    private String attrName;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;attr_code&quot;)</span><br><span class="line">    @Description(value &#x3D; &quot;属性编码&quot;)</span><br><span class="line">    private String attrCode;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;attr_desc&quot;)</span><br><span class="line">    @Description(value &#x3D; &quot;属性描述&quot;)</span><br><span class="line">    private String attrDesc;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;sort_num&quot;)</span><br><span class="line">    private Integer sortNum;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;web_control_type&quot;)</span><br><span class="line">    @Description(value &#x3D; &quot;前端控件类型&quot;)</span><br><span class="line">    @Convert(converter &#x3D; WebControlTypeConverter.class)</span><br><span class="line">    private WebControlType controlType;</span><br><span class="line"></span><br><span class="line">    public void createAttr(Long productId, AttrBean bean)&#123;</span><br><span class="line">        setSortNum(0);</span><br><span class="line">        setProductId(productId);</span><br><span class="line">        setControlType(bean.getControlType());</span><br><span class="line">        setAttrCode(bean.getAttrCode());</span><br><span class="line">        setAttrDesc(bean.getAttrDesc());</span><br><span class="line">        setAttrName(bean.getAttrName());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因为没有其他业务操作，所有该类只有一个保存方法。该类通过 productId 关联产品类。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">@Column(name &#x3D; &quot;product_id&quot;)</span><br><span class="line">   @Setter</span><br><span class="line">   private Long productId;</span><br></pre></td></tr></table></figure>
+<p>再抽象一个属性值类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">@Table(name &#x3D; &quot;tb_product_attribute_value&quot;)</span><br><span class="line">@Data</span><br><span class="line">@Entity</span><br><span class="line">@GenVO</span><br><span class="line">public class ProductAttributeValue extends AbstractEntity &#123;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;product_attr_id&quot;)</span><br><span class="line">    private Long productAttrId;</span><br><span class="line"></span><br><span class="line">    @Description(value &#x3D; &quot;属性的值&quot;)</span><br><span class="line">    private String attrValue;</span><br><span class="line"></span><br><span class="line">    public ProductAttributeValue(Long productAttrId, String attrValue)&#123;</span><br><span class="line">        this.productAttrId &#x3D; productAttrId;</span><br><span class="line">        this.attrValue &#x3D; attrValue;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>属性值类通过 productAttrId 关联属性类</p>
+<p>对象间的关系明确后，通过聚合根Product 进行属性和属性值的维护，方法如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">@Transactional</span><br><span class="line">public void create(CreateProductDto dto) &#123;</span><br><span class="line">    Optional&lt;ProductCategory&gt; category &#x3D; categoryRepository.findById(dto.getCategoryId());</span><br><span class="line">    if(!category.isPresent())&#123;</span><br><span class="line">        throw new BusinessException(CodeEnum.NotFindError);</span><br><span class="line">    &#125;</span><br><span class="line">    Optional&lt;ProductType&gt; productType &#x3D; productTypeRepository.findById(dto.getTypeId());</span><br><span class="line">    if(!productType.isPresent())&#123;</span><br><span class="line">        throw new BusinessException(CodeEnum.NotFindError);</span><br><span class="line">    &#125;</span><br><span class="line">    Product createProduct &#x3D; creatorFor(productRepository)</span><br><span class="line">            .instance(() -&gt; new Product())</span><br><span class="line">            .update(product -&gt; product.init())</span><br><span class="line">            .update(product -&gt; product.createProduct(dto))</span><br><span class="line">            .call();</span><br><span class="line">    logger.info(&quot;创建产品成功&quot;);</span><br><span class="line">    logger.info(&quot;添加属性开始&quot;);</span><br><span class="line">    List&lt;AttrBean&gt; list &#x3D; dto.getAttrList();</span><br><span class="line">    list.stream().forEach(</span><br><span class="line">            ab -&gt; &#123;</span><br><span class="line">                ProductAttribute productAttribute &#x3D; creatorFor(attributeRepository)</span><br><span class="line">                        .instance(() -&gt; new ProductAttribute())</span><br><span class="line">                        .update(attr -&gt; attr.createAttr(createProduct.getId(),ab))</span><br><span class="line">                        .call();</span><br><span class="line"></span><br><span class="line">                ab.getAttrValues().forEach(av -&gt; &#123;</span><br><span class="line">                    creatorFor(attributeValueRepository)</span><br><span class="line">                            .instance(() -&gt; new ProductAttributeValue(productAttribute.getId(),av))</span><br><span class="line">                            .call();</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">    );</span><br><span class="line">    logger.info(&quot;添加属性结束&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中 Dto 是前台传递的参数。<br>这样就完成的产品的添加。</p>
+<ul>
+<li>规格的添加</li>
+</ul>
+<p>规格是产品的库存单元，规格有明确的价格，库存，并且有上架和下架的方法。定义对象如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line">@Table(name &#x3D; &quot;tb_product_specification&quot;)</span><br><span class="line">@Data</span><br><span class="line">@Entity</span><br><span class="line">@GenVO</span><br><span class="line">public class ProductSpecification extends AbstractEntity &#123;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;product_id&quot;)</span><br><span class="line">    private Long productId;</span><br><span class="line"></span><br><span class="line">    @Description(value &#x3D; &quot;排序值&quot;)</span><br><span class="line">    @Column(name &#x3D; &quot;sort_num&quot;)</span><br><span class="line">    private Integer sortNum &#x3D; 0;</span><br><span class="line"></span><br><span class="line">    @Description(value &#x3D; &quot;规格唯一编码&quot;)</span><br><span class="line">    @Column(name &#x3D; &quot;spec_code&quot;)</span><br><span class="line">    private String specCode;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;product_spec_name&quot;)</span><br><span class="line">    private String productSpecName;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;price&quot;)</span><br><span class="line">    private BigDecimal price;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;warn_stock&quot;)</span><br><span class="line">    private Integer warnStock;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;valid_status&quot;)</span><br><span class="line">    @Convert(converter &#x3D; ValidStatusConverter.class)</span><br><span class="line">    private ValidStatus validStatus;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;sale_status&quot;)</span><br><span class="line">    @Convert(converter &#x3D; ValidStatusConverter.class)</span><br><span class="line">    private ValidStatus onlineStatus;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;time_interval&quot;)</span><br><span class="line">    @Description(value &#x3D; &quot;授权时间&quot;)</span><br><span class="line">    private Integer timeInterval;</span><br><span class="line"></span><br><span class="line">    public void doCreate(ProductSpecificationInitDto dto)&#123;</span><br><span class="line">        setTimeInterval(Objects.isNull(dto.getTimeInterval())?0:dto.getTimeInterval());</span><br><span class="line">        setOnlineStatus(ValidStatus.INVALID);</span><br><span class="line">        setValidStatus(ValidStatus.INVALID);</span><br><span class="line">        setProductId(dto.getProductId());</span><br><span class="line">&#x2F;&#x2F;        List&lt;SerializeAttr&gt; serializeAttrList &#x3D; dto.getAttrs().stream().map(spec -&gt; new SerializeAttr(spec.getAttrName(),spec.getAttrValue())).collect(Collectors.toList());</span><br><span class="line">&#x2F;&#x2F;        setAttrJson(JSON.toJSONString(serializeAttrList));</span><br><span class="line">        setSortNum(1);</span><br><span class="line">        setSpecCode(dto.getSpecCode());</span><br><span class="line">        setProductSpecName(dto.getProductSpecName());</span><br><span class="line">        setPrice(dto.getPrice());</span><br><span class="line">        setWarnStock(dto.getWarnStock());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void invalid()&#123;</span><br><span class="line">        if(Objects.equals(ValidStatus.INVALID,getValidStatus()))&#123;</span><br><span class="line">            throw new BusinessException(ErrorMsg.StatusHasInvalid);</span><br><span class="line">        &#125;</span><br><span class="line">        setValidStatus(ValidStatus.INVALID);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void valid()&#123;</span><br><span class="line">        if(Objects.equals(ValidStatus.VALID,getValidStatus()))&#123;</span><br><span class="line">            throw new BusinessException(ErrorMsg.StatusHasValid);</span><br><span class="line">        &#125;</span><br><span class="line">        setValidStatus(ValidStatus.VALID);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void onLine()&#123;</span><br><span class="line">        if(Objects.equals(ValidStatus.VALID,getOnlineStatus()))&#123;</span><br><span class="line">            throw new BusinessException(ErrorMsg.StatusHasValid);</span><br><span class="line">        &#125;</span><br><span class="line">        setOnlineStatus(ValidStatus.VALID);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void offLine()&#123;</span><br><span class="line">        if(Objects.equals(ValidStatus.INVALID,getOnlineStatus()))&#123;</span><br><span class="line">            throw new BusinessException(ErrorMsg.StatusHasInvalid);</span><br><span class="line">        &#125;</span><br><span class="line">        setOnlineStatus(ValidStatus.INVALID);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    @Value</span><br><span class="line">    private static class SerializeAttr&#123;</span><br><span class="line">        private String k;</span><br><span class="line">        private String v;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public boolean equals(Object o) &#123;</span><br><span class="line">        if (this &#x3D;&#x3D; o) return true;</span><br><span class="line">        if (o &#x3D;&#x3D; null || getClass() !&#x3D; o.getClass()) return false;</span><br><span class="line">        if (!super.equals(o)) return false;</span><br><span class="line">        ProductSpecification that &#x3D; (ProductSpecification) o;</span><br><span class="line">        return Objects.equals(sortNum, that.sortNum) &amp;&amp;</span><br><span class="line">                Objects.equals(specCode, that.specCode) &amp;&amp;</span><br><span class="line">                Objects.equals(productSpecName, that.productSpecName);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public int hashCode() &#123;</span><br><span class="line">        return Objects.hash(super.hashCode(), sortNum, specCode, productSpecName);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>里面定义了规格的所有行为。<br>创建规格方法如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"> &#x2F;&#x2F;添加规格</span><br><span class="line">@Override</span><br><span class="line">public ProductSpecification initSpecification(ProductSpecificationInitDto dto) &#123;</span><br><span class="line">    Optional&lt;ProductSpecification&gt; specification &#x3D; specificationRepository.findBySpecCode(dto.getSpecCode());</span><br><span class="line">    if(specification.isPresent())&#123;</span><br><span class="line">        throw new BusinessException(ErrorMsg.SpecCodeIsExist);</span><br><span class="line">    &#125;</span><br><span class="line">    Optional&lt;Product&gt; product &#x3D; productRepository.findById(dto.getProductId());</span><br><span class="line">    if(!product.isPresent())&#123;</span><br><span class="line">        throw new BusinessException(CodeEnum.NotFindError);</span><br><span class="line">    &#125;</span><br><span class="line">    ProductSpecification createSpec &#x3D;  creatorFor(specificationRepository)</span><br><span class="line">            .instance(() -&gt; new ProductSpecification())</span><br><span class="line">            .update(spec -&gt; spec.doCreate(dto))</span><br><span class="line">            .call();</span><br><span class="line">    log.info(&quot;创建规格结束&quot;);</span><br><span class="line">    dto.getAttrs().forEach(attrWrapper -&gt; &#123;</span><br><span class="line">        attrWrapper.getAttrList().stream().forEach(attrValues -&gt; &#123;</span><br><span class="line">            creatorFor(attrRepository)</span><br><span class="line">                    .instance(() -&gt; new SpecificationAttr())</span><br><span class="line">                    .update(atr -&gt; atr.create(createSpec.getId(),attrWrapper.getAttrId(),attrValues.getAttrValueId(),attrWrapper.getAttrName(),attrValues.getAttrValue(),attrWrapper.getAttrCode()))</span><br><span class="line">                    .call();</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">    &#125;);</span><br><span class="line">    log.info(&quot;创建规格值结束&quot;);</span><br><span class="line">    return createSpec;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过以上的功能，我们可以看到，原来的 Service 方法里面不再有业务动作，只有查询校验操作，所有的业务动作都是在实体本身中编写的，这样 Service 层的代码将变的很单一。因为代码的实现比较多，可以直接看代码。这里就不附上所有的源码了。</p>
+<h4 id="商品出入库的设计"><a href="#商品出入库的设计" class="headerlink" title="商品出入库的设计"></a>商品出入库的设计</h4><ul>
+<li>商品录入比较简单，如果业务比较复杂的话，那么我们该如何抽象业务对象，并且采用领域驱动进行设计呢。商品的出入库设计就是一个典型案例。</li>
+<li>供应链系统的核心是什么呢？其实就是商品的跟踪，商品在仓库之间的流转。最终的目的是跟踪任何一个商品的生命周期。</li>
+<li>假如我们没有产品图和原型图，我们只有这样的一个业务需求，我们该如何抽象出核心域呢。首先我们可以从生活上去想象，我们是一个仓库的管理员，我们需要按照老板的要求统计我们仓库内商品的明细。假如现在来了一批货我们该如何把这些货物记录下来呢，从实际来讲我们需要把条码一个个的记录下来，然后标注上这是入库。并且呢还需要一个助手把货物放入货架上，负责给货物分好批次并记录每种货物的库存量。突然有一天老板说，你得把每件货物的去向给我记录下来，这实际就对应着一个需求的增加，如果按照原来在 Service 层的写法，那么我们就需要更改我们的 Service 方法，实际上这种需求的增加我们可以通过一种方式进行解耦。答案就是事件。</li>
+<li>事件是业务解耦的利器，如果我们分析下商品出入库的本质，实际上商品的出入库对应着两个事件，商品的出库和入库，如果我们把这两个事件进行优雅的处理，那么我们的核心业务（商品的跟踪）不就很容易的解决了吗。</li>
+<li>有人可能要说了，仓库入库会有一个出入库单，那里面有总数量和总金额的统计，那通过单一的产品事件怎么来实现呢，其实这是两个概念，在领域设计时很容易混淆，在实际的操作中，往往有一个批次的概念。这里我们通过给商品打一个标识，说明一些商品是一个批次的，那么在处理事件时根据批次，则可以进行数量和总金额的统计。</li>
+<li>商品的设计如下：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">@Entity</span><br><span class="line">@Data</span><br><span class="line">@Table(name &#x3D; &quot;tb_goods&quot;)</span><br><span class="line">@GenCreator</span><br><span class="line">@GenUpdater</span><br><span class="line">@GenVO</span><br><span class="line">@ToString(callSuper &#x3D; true)</span><br><span class="line">public class Goods extends AbstractEntity &#123;</span><br><span class="line"></span><br><span class="line">    @Description(value &#x3D; &quot;条码&quot;)</span><br><span class="line">    @Column(name &#x3D; &quot;bar_code&quot;)</span><br><span class="line">    private String barCode;</span><br><span class="line"></span><br><span class="line">    @Convert(converter &#x3D; GoodsTypeConverter.class)</span><br><span class="line">    @Column(name &#x3D; &quot;goods_type&quot;)</span><br><span class="line">    private GoodsType goodsType;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;valid_status&quot;)</span><br><span class="line">    @Convert(converter &#x3D; ValidStatusConverter.class)</span><br><span class="line">    private ValidStatus validStatus;</span><br><span class="line"></span><br><span class="line">    @Column(name&#x3D;&quot;parent_id&quot;)</span><br><span class="line">    @Setter(AccessLevel.PROTECTED)</span><br><span class="line">    private Long parentId;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;store_id&quot;)</span><br><span class="line">    private Long storeId;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;product_specification_id&quot;)</span><br><span class="line">    private Long specificationId;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;batch_id&quot;)</span><br><span class="line">    @Description(value &#x3D; &quot;批次号-》代表一个批次&quot;)</span><br><span class="line">    private Long batchId;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;operate_user&quot;)</span><br><span class="line">    private String operateUser;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;provider_name&quot;)</span><br><span class="line">    private String providerName;</span><br><span class="line"></span><br><span class="line">    private void goodsIn(GoodsCreateDto object,Long storeId, Long specificationId,Long batchId)&#123;</span><br><span class="line">        BizExceptionUtils.checkEmpty(object.getBarCode(), ErrorMsg.BarCodeNotNull);</span><br><span class="line">        setValidStatus(ValidStatus.VALID);</span><br><span class="line">        setBarCode(object.getBarCode());</span><br><span class="line">        setOperateUser(object.getOperateUser());</span><br><span class="line">        setStoreId(storeId);</span><br><span class="line">        setProviderName(object.getProviderName());</span><br><span class="line">        setBatchId(batchId);</span><br><span class="line">        setSpecificationId(specificationId);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private void goodsOut(Long batchId,String operateUser)&#123;</span><br><span class="line">        if(Objects.equals(ValidStatus.INVALID,getValidStatus()))&#123;</span><br><span class="line">            throw new BusinessException(ErrorMsg.GoodsNotAvailable);</span><br><span class="line">        &#125;</span><br><span class="line">        setBatchId(batchId);</span><br><span class="line">        setOperateUser(operateUser);</span><br><span class="line">        setValidStatus(ValidStatus.INVALID);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;商品零部件入库</span><br><span class="line">    public void goodsBasicInStore(GoodsCreateDto object,Long storeId, Long specificationId,Long batchId)&#123;</span><br><span class="line">        goodsIn(object,storeId,specificationId,batchId);</span><br><span class="line">        setGoodsType(GoodsType.GOODS_BASIC);</span><br><span class="line">        registerEvent(new GoodsEvents.GoodsInEvent(this,object.getOperateTime(),object.getProviderName(), InOutOperationType.IN_PURCHASE));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void goodsTransferInStore(GoodsCreateDto object,Long storeId, Long specificationId,Long batchId,GoodsType type)&#123;</span><br><span class="line">        goodsIn(object,storeId,specificationId,batchId);</span><br><span class="line">        setGoodsType(type);</span><br><span class="line">        registerEvent(new GoodsEvents.GoodsInEvent(this,object.getOperateTime(),object.getProviderName(),InOutOperationType.IN_TRANSFER));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void goodsBuyInStore(GoodsCreateDto object,Long storeId, Long specificationId,Long batchId,GoodsType type)&#123;</span><br><span class="line">        goodsIn(object,storeId,specificationId,batchId);</span><br><span class="line">        setGoodsType(type);</span><br><span class="line">        registerEvent(new GoodsEvents.GoodsInEvent(this,object.getOperateTime(),object.getProviderName(),InOutOperationType.IN_PURCHASE));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public void goodsTransferOutStore(Long batchId,String operateUser)&#123;</span><br><span class="line">        goodsOut(batchId,operateUser);</span><br><span class="line">        registerEvent(new GoodsEvents.GoodsOutEvent(this,Instant.now().toEpochMilli(),InOutOperationType.OUT_TRANSFER));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;商品生产入库</span><br><span class="line">    public void goodsMakeInStore(Long storeId,Long specificationId,GoodsCreateDto dto,Long batchId)&#123;</span><br><span class="line">        goodsIn(dto,storeId,specificationId,batchId);</span><br><span class="line">        setGoodsType(GoodsType.GOODS_MAKE);</span><br><span class="line">        registerEvent(new GoodsEvents.GoodsInEvent(this,dto.getOperateTime(),dto.getProviderName(),InOutOperationType.IN_MAKE));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;商品配货入库</span><br><span class="line">    public void goodsAssembleInStore(Long storeId,Long specificationId,GoodsCreateDto dto,Long batchId)&#123;</span><br><span class="line">        goodsIn(dto,storeId,specificationId,batchId);</span><br><span class="line">        setGoodsType(GoodsType.GOODS_ASSEMBLE);</span><br><span class="line">        registerEvent(new GoodsEvents.GoodsInEvent(this,dto.getOperateTime(),dto.getProviderName(),InOutOperationType.IN_ASSEMBLE));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void goodsBadInStore(Long storeId,Long specificationId,GoodsCreateDto dto,Long batchId)&#123;</span><br><span class="line">        goodsIn(dto,storeId,specificationId,batchId);</span><br><span class="line">        setGoodsType(GoodsType.GOODS_BAD);</span><br><span class="line">        registerEvent(new GoodsEvents.GoodsInEvent(this,dto.getOperateTime(),dto.getProviderName(),InOutOperationType.IN_BAD));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void goodsAssembleUsed(Long batchId,String operateUser)&#123;</span><br><span class="line">        goodsOut(batchId,operateUser);</span><br><span class="line">        registerEvent(new GoodsEvents.GoodsOutEvent(this,Instant.now().toEpochMilli(),InOutOperationType.OUT_ASSEMBLE));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void goodsMakeUsed(Long batchId,String operateUser)&#123;</span><br><span class="line">        goodsOut(batchId,operateUser);</span><br><span class="line">        registerEvent(new GoodsEvents.GoodsOutEvent(this, Instant.now().toEpochMilli(),InOutOperationType.OUT_MAKE_USED));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void goodsSaleToAgent(Long batchId,String operateUser)&#123;</span><br><span class="line">        goodsOut(batchId,operateUser);</span><br><span class="line">        registerEvent(new GoodsEvents.GoodsOutEvent(this, Instant.now().toEpochMilli(),InOutOperationType.OUT_SALE_TO_AGENT));</span><br><span class="line">    &#125;</span><br><span class="line">    public void goodSaleToUser(Long batchId,String operateUser)&#123;</span><br><span class="line">        goodsOut(batchId,operateUser);</span><br><span class="line">        registerEvent(new GoodsEvents.GoodsOutEvent(this, Instant.now().toEpochMilli(),InOutOperationType.OUT_SALE_TO_USER));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void goodsTransferToOtherStore(Long batchId,String operateUser)&#123;</span><br><span class="line">        goodsOut(batchId,operateUser);</span><br><span class="line">        registerEvent(new GoodsEvents.GoodsOutEvent(this, Instant.now().toEpochMilli(),InOutOperationType.OUT_TRANSFER));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void parentId(Long pid)&#123;</span><br><span class="line">        setParentId(pid);</span><br><span class="line">    &#125;</span><br><span class="line">&#x2F;&#x2F;    &#x2F;&#x2F;将生产件置为配货使用</span><br><span class="line">&#x2F;&#x2F;    public void  goodsStatusToAssembleUsed()&#123;</span><br><span class="line">&#x2F;&#x2F;        setValidStatus(ValidStatus.INVALID);</span><br><span class="line">&#x2F;&#x2F;        setGoodsStatus(GoodsStatus.ASSEMBLE_USED);</span><br><span class="line">&#x2F;&#x2F;    &#125;</span><br><span class="line"></span><br><span class="line">    @Value</span><br><span class="line">    public static class GoodsCreateDto&#123;</span><br><span class="line">        private String barCode;</span><br><span class="line">        private String operateUser;</span><br><span class="line">        private Long operateTime;</span><br><span class="line">        private String providerName;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，抽象出来概念后，我们的商品核心动作只有两个：出库和入库。但是出入库类型根据业务动作，通过事件发出。<br>在事件处理器中做相应的业务逻辑。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br></pre></td><td class="code"><pre><span class="line">@Component</span><br><span class="line">@Slf4j</span><br><span class="line">public class GoodsEventProcessor &#123;</span><br><span class="line"></span><br><span class="line">    @Autowired</span><br><span class="line">    private IStoreInOutRecordService storeInOutRecordService;</span><br><span class="line"></span><br><span class="line">    @Autowired</span><br><span class="line">    private IGoodsTraceLogService goodsTraceLogService;</span><br><span class="line"></span><br><span class="line">    @Autowired</span><br><span class="line">    private IGoodsService goodsService;</span><br><span class="line"></span><br><span class="line">    @Autowired</span><br><span class="line">    private IStoreSpecificationSummaryService storeSpecificationSummaryService;</span><br><span class="line"></span><br><span class="line">    @Autowired</span><br><span class="line">    private IProductSpecificationService specificationService;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;handle GoodsCreateEvent --&gt;分别监听这种方式适合后期快速切换到mq &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line">    &#x2F;&#x2F;零部件入库</span><br><span class="line">    @TransactionalEventListener(phase &#x3D; TransactionPhase.BEFORE_COMMIT)</span><br><span class="line">    public void handleGoodsCreateEventForRecord(GoodsEvents.GoodsInEvent event)&#123;</span><br><span class="line">        Goods goods &#x3D; goodsService.findById(event.getGoods().getId()).get();</span><br><span class="line">        ProductSpecification specification &#x3D; specificationService.findById(goods.getSpecificationId()).get();</span><br><span class="line">        CreateStoreRecordDto dto &#x3D; CreateStoreRecordDto.builder()</span><br><span class="line">                .batchId(goods.getBatchId())</span><br><span class="line">                .directionType(InOutDirectionType.IN)</span><br><span class="line">                .operationType(event.getInOutOperationType())</span><br><span class="line">                .goodsId(goods.getId())</span><br><span class="line">                .operateUser(goods.getOperateUser())</span><br><span class="line">                .operateTime(event.getOperateTime())</span><br><span class="line">                .providerName(goods.getProviderName())</span><br><span class="line">                .price(specification.getPrice())</span><br><span class="line">                .remark(event.getInOutOperationType().name())</span><br><span class="line">                .build();</span><br><span class="line">        storeInOutRecordService.addRecord(dto,goods.getSpecificationId(),goods.getStoreId());</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;产品录入库后，保存入库日志</span><br><span class="line">    @TransactionalEventListener(phase &#x3D; TransactionPhase.BEFORE_COMMIT)</span><br><span class="line">    public void handleGoodsCreateEventForLog(GoodsEvents.GoodsInEvent event)&#123;</span><br><span class="line">        Goods goods &#x3D; goodsService.findById(event.getGoods().getId()).get();</span><br><span class="line">        Map&lt;String,Object&gt; map &#x3D; Maps.newHashMap();</span><br><span class="line">        map.put(&quot;provider&quot;,event.getProviderName());</span><br><span class="line">        handleGoodsLog(goods, TraceType.IN_STORE,event.getInOutOperationType(),map);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;产品录入库后，添加库存信息</span><br><span class="line">    @TransactionalEventListener(phase &#x3D; TransactionPhase.BEFORE_COMMIT)</span><br><span class="line">    public void handleGoodsCreateEventForSpecification(GoodsEvents.GoodsInEvent event)&#123;</span><br><span class="line">        Goods goods &#x3D; goodsService.findById(event.getGoods().getId()).get();</span><br><span class="line">        handleSpecificationAdd(goods);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;handle GoodOutEvent &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;商品被使用出库更新规格的数量</span><br><span class="line">    @TransactionalEventListener(phase &#x3D; TransactionPhase.BEFORE_COMMIT)</span><br><span class="line">    public void handleGoodsOutEventForRecord(GoodsEvents.GoodsOutEvent event)&#123;</span><br><span class="line">        Goods goods &#x3D; goodsService.findById(event.getGoods().getId()).get();</span><br><span class="line">        CreateStoreRecordDto dto &#x3D; CreateStoreRecordDto.builder()</span><br><span class="line">                .batchId(goods.getBatchId())</span><br><span class="line">                .directionType(InOutDirectionType.OUT)</span><br><span class="line">                .operationType(event.getInOutOperationType())</span><br><span class="line">                .goodsId(goods.getId())</span><br><span class="line">                .remark(event.getInOutOperationType().name())</span><br><span class="line">                .build();</span><br><span class="line">        &#x2F;&#x2F;产品被组装使用后添加库存明细</span><br><span class="line">        storeInOutRecordService.addRecord(dto,goods.getSpecificationId(),goods.getStoreId());</span><br><span class="line">        Map&lt;String,Object&gt; map &#x3D; Maps.newHashMap();</span><br><span class="line">        handleGoodsLog(goods,TraceType.OUT_STORE,event.getInOutOperationType(),map);</span><br><span class="line">        handleSpecificationSub(goods);</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;公用方法模块++++++++++++++++++++++++++++++++++++</span><br><span class="line">    private void handleSpecificationAdd(Goods goods)&#123;</span><br><span class="line">        Optional&lt;ProductSpecification&gt; specification &#x3D; specificationService.findById(goods.getSpecificationId());</span><br><span class="line">        InitSpecificationDto dto &#x3D; InitSpecificationDto.builder()</span><br><span class="line">                .specificationId(goods.getSpecificationId())</span><br><span class="line">                .specificationName(specification.get().getProductSpecName())</span><br><span class="line">                .stock(1)</span><br><span class="line">                .totalPrice(specification.get().getPrice())</span><br><span class="line">                .storeId(goods.getStoreId())</span><br><span class="line">                .build();</span><br><span class="line">        Optional&lt;StoreSpecificationSummary&gt; summary &#x3D; storeSpecificationSummaryService.findByStoreAndSpecificationId(goods.getStoreId(),goods.getSpecificationId());</span><br><span class="line">        if(summary.isPresent())&#123;</span><br><span class="line">            storeSpecificationSummaryService.addStockAndPrice(summary.get().getId(),1,specification.get().getPrice());</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            storeSpecificationSummaryService.createStoreSpecificationSummary(dto);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private void handleSpecificationSub(Goods goods)&#123;</span><br><span class="line">        Optional&lt;StoreSpecificationSummary&gt; summary &#x3D; storeSpecificationSummaryService.findByStoreAndSpecificationId(goods.getStoreId(),goods.getSpecificationId());</span><br><span class="line">        Optional&lt;ProductSpecification&gt; specification &#x3D; specificationService.findById(goods.getSpecificationId());</span><br><span class="line">        storeSpecificationSummaryService.subStockAndPrice(summary.get().getId(),1,specification.get().getPrice());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private void handleGoodsLog(Goods goods, TraceType traceType, InOutOperationType type, Map&lt;String, Object&gt; map)&#123;</span><br><span class="line">        GoodsTraceLogCreator creator &#x3D; new GoodsTraceLogCreator();</span><br><span class="line">        creator.barcode(goods.getBarCode());</span><br><span class="line">        creator.flowWater(goods.getBatchId());</span><br><span class="line">        creator.operationType(type);</span><br><span class="line">        creator.goodsId(goods.getId());</span><br><span class="line">        creator.storeId(goods.getStoreId());</span><br><span class="line">        creator.logDesc(JSON.toJSONString(map));</span><br><span class="line">        creator.traceType(traceType);</span><br><span class="line">        goodsTraceLogService.createTraceLog(creator);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>商品的设计完成后，针对每一次的出入库事件进行相应的业务操作，这样也就跟踪了商品的整个生命周期。<br>针对出入库记录设计对象如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br></pre></td><td class="code"><pre><span class="line">@Data</span><br><span class="line">@Entity</span><br><span class="line">@Table(name &#x3D; &quot;yd_store_in_out_record&quot;)</span><br><span class="line">@ToString(callSuper &#x3D; true)</span><br><span class="line">@GenVO</span><br><span class="line">public class StoreInOutRecord extends AbstractEntity &#123;</span><br><span class="line"></span><br><span class="line">    @Description(value &#x3D; &quot;操作类型&quot;)</span><br><span class="line">    @Convert(converter &#x3D; InOutOperationTypeConverter.class)</span><br><span class="line">    @Column(name &#x3D; &quot;operation_type&quot;)</span><br><span class="line">    private InOutOperationType operationType;</span><br><span class="line"></span><br><span class="line">    @Description(value &#x3D; &quot;&quot;)</span><br><span class="line">    @Column(name &#x3D; &quot;direction_type&quot;)</span><br><span class="line">    @Convert(converter &#x3D; InOutDirectionTypeConverter.class)</span><br><span class="line">    private InOutDirectionType directionType;</span><br><span class="line"></span><br><span class="line">    @Description(value &#x3D; &quot;总价&quot;)</span><br><span class="line">    @Column(name &#x3D; &quot;total_price&quot;)</span><br><span class="line">    private BigDecimal totalPrice;</span><br><span class="line"></span><br><span class="line">    @Description(value &#x3D; &quot;数量&quot;)</span><br><span class="line">    @Column(name &#x3D; &quot;count&quot;)</span><br><span class="line">    private Integer count;</span><br><span class="line"></span><br><span class="line">    @Description(value &#x3D; &quot;备注&quot;)</span><br><span class="line">    @Column(name &#x3D; &quot;remark&quot;)</span><br><span class="line">    private String remark;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;spec_id&quot;)</span><br><span class="line">    private Long specificationId;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;water_flow_number&quot;)</span><br><span class="line">    private Long waterFlowNumber;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;goods_batch_id&quot;)</span><br><span class="line">    private Long goodsBatchId;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;store_id&quot;)</span><br><span class="line">    private Long storeId;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;operate_user&quot;)</span><br><span class="line">    private String operateUser;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;operate_time&quot;)</span><br><span class="line">    private Long operateTime;</span><br><span class="line"></span><br><span class="line">    @Column(name &#x3D; &quot;provider_name&quot;)</span><br><span class="line">    private String providerName;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;添加入库记录--&gt; 注册入库事件</span><br><span class="line">    public void addRecord(CreateStoreRecordDto dto, Long specificationId, Long storeId)&#123;</span><br><span class="line">        setDirectionType(dto.getDirectionType());</span><br><span class="line">        setOperationType(dto.getOperationType());</span><br><span class="line">        setRemark(dto.getRemark());</span><br><span class="line">        setStoreId(storeId);</span><br><span class="line">        setSpecificationId(specificationId);</span><br><span class="line">        setWaterFlowNumber(WaterFlowUtils.nextWaterFlow());</span><br><span class="line">        setCount(1);</span><br><span class="line">        setGoodsBatchId(dto.getBatchId());</span><br><span class="line">        setTotalPrice(dto.getPrice());</span><br><span class="line">        setProviderName(dto.getProviderName());</span><br><span class="line">        setOperateTime(dto.getOperateTime());</span><br><span class="line">        if(StringUtils.isNotEmpty(dto.getOperateUser()))&#123;</span><br><span class="line">            setOperateUser(dto.getOperateUser());</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            setOperateUser(ErpConstants.SYSTEM);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;更新价格和数量(根据批次）</span><br><span class="line">    public void updatePriceAndCount(BigDecimal price, Integer count)&#123;</span><br><span class="line">        setTotalPrice(NumberUtil.add(getTotalPrice(),price));</span><br><span class="line">        setCount(getCount() + count);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public String toString() &#123;</span><br><span class="line">        return this.getClass().getSimpleName() + &quot;-&quot; + getId();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public boolean equals(Object o) &#123;</span><br><span class="line">        if (this &#x3D;&#x3D; o) return true;</span><br><span class="line">        if (o &#x3D;&#x3D; null || getClass() !&#x3D; o.getClass()) return false;</span><br><span class="line">        if (!super.equals(o)) return false;</span><br><span class="line">        StoreInOutRecord that &#x3D; (StoreInOutRecord) o;</span><br><span class="line">        return Objects.equals(totalPrice, that.totalPrice) &amp;&amp;</span><br><span class="line">                Objects.equals(count, that.count) &amp;&amp;</span><br><span class="line">                Objects.equals(remark, that.remark) &amp;&amp;</span><br><span class="line">                Objects.equals(waterFlowNumber, that.waterFlowNumber) &amp;&amp;</span><br><span class="line">                Objects.equals(goodsBatchId, that.goodsBatchId);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public int hashCode() &#123;</span><br><span class="line">        return Objects.hash(super.hashCode(), totalPrice, count, remark, waterFlowNumber, goodsBatchId);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因为我们监听的是每一个商品的出入库动作，所以我们可以监听商品的各种维度信息。包括商品的状态跟踪，商品的规格信息统计。我们都可以通过事件的方式来进行解耦。具体代码可以查看源代码。</p>
+<h3 id="项目如何启动"><a href="#项目如何启动" class="headerlink" title="项目如何启动"></a>项目如何启动</h3><ul>
+<li>下载后首先 install gh-common模块</li>
+<li>install gh-code-gen 模块</li>
+<li>compile gh-erp-service 模块</li>
+<li>run ErpApplication 后访问 <a href="http://localhost:8888/swagger-ui.html#/" target="_blank" rel="noopener">http://localhost:8888/swagger-ui.html#/</a> 即可。<h3 id="项目模块和技术框架介绍"><a href="#项目模块和技术框架介绍" class="headerlink" title="项目模块和技术框架介绍"></a>项目模块和技术框架介绍</h3><h3 id="其他学习资源"><a href="#其他学习资源" class="headerlink" title="其他学习资源"></a>其他学习资源</h3></li>
+<li>随着 Spring Data 项目的不断完善，学习 Spring Data 的一些标准和规范会对日常开发有巨大的帮助，如果熟练使用这门技术，在开发业务系统时可以达到极速开发的效果。有一些不错的学习资源在这里推荐一下：</li>
+</ul>
+<ol>
+<li><a href="https://vladmihalcea.com/" target="_blank" rel="noopener">国外比较好的博客</a>，在Stack Overflow 上也有很多关于 JPA 的回答。</li>
+<li><a href="https://www.baeldung.com/?s=spring+data" target="_blank" rel="noopener">一个非常好的博客</a>,GitHub上有非常多的案例代码。</li>
+</ol>
+<p>这两个博客的文章都看完并且练习完成的话，可以达到一个非常高的水平了。其次比较好的文章就是官方的文档和官方开源项目下面的案例及测试案例了。</p>
+<ul>
+<li>关于代码生成器，本文只使用了最初的版本，现在版本已经支持 QueryDsl ,Controller, Repository ,枚举类，等等的自动化，该代码生成器由平台的另一位作者进行开发@文心紫竹 。<br><a href="https://gitee.com/litao851025/geekhalo-ddd" target="_blank" rel="noopener">项目地址</a>。关于 DDD 的一些思想和项目以后将会发布在上面。如果有任何想实现的功能模块可以提Issue,有时间的话可以使用 DDD 进行案例分析及编码并分享。</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E9%A2%86%E5%9F%9F%E9%A9%B1%E5%8A%A8/" rel="tag"># 领域驱动</a>
+          
+            <a href="/tags/%E4%BE%9B%E5%BA%94%E9%93%BE/" rel="tag"># 供应链</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/03/first/" rel="next" title="使用Spring Batch 批量迁移 MySQL 数据">
+                <i class="fa fa-chevron-left"></i> 使用Spring Batch 批量迁移 MySQL 数据
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">GIM</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#背景介绍"><span class="nav-number">1.</span> <span class="nav-text">背景介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#业务介绍"><span class="nav-number">2.</span> <span class="nav-text">业务介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#业务分析及技术简介"><span class="nav-number">3.</span> <span class="nav-text">业务分析及技术简介</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#项目模块和技术使用简介"><span class="nav-number">3.1.</span> <span class="nav-text">项目模块和技术使用简介</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#商品的录入设计（面向对象的设计）"><span class="nav-number">3.2.</span> <span class="nav-text">商品的录入设计（面向对象的设计）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#商品出入库的设计"><span class="nav-number">3.3.</span> <span class="nav-text">商品出入库的设计</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#项目如何启动"><span class="nav-number">4.</span> <span class="nav-text">项目如何启动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#项目模块和技术框架介绍"><span class="nav-number">5.</span> <span class="nav-text">项目模块和技术框架介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他学习资源"><span class="nav-number">6.</span> <span class="nav-text">其他学习资源</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">GIM</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
